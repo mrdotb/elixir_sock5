@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mrdotb/elixir_sock5.svg?branch=master)](https://travis-ci.org/mrdotb/elixir_sock5)
 
-Creates a simple SOCKS5 server.
+Creates a simple SOCKS5 server fallowing the rfc spec.
 
 The following RFCs may be useful as background:
 
