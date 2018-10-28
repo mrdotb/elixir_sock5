@@ -12,8 +12,8 @@ jobs:
   include:
     - stage: test
 
-    - elixir: '1.4.0'
-      otp_release: '19.1'
+    - elixir: '1.7.0'
+      otp_release: '21.1'
 
     - stage: check formatted
       script: mix format --check-formatted
