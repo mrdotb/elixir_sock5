@@ -1,6 +1,7 @@
 defmodule ElixirSocks5.Connect do
   require Logger
 
+  @rfc_1928_version 0x05
   @rfc_1928_atyp_ipv4 0x01
   @rfc_1928_atyp_domainname 0x03
   @rfc_1928_atyp_ipv6 0x04
@@ -22,16 +23,10 @@ defmodule ElixirSocks5.Connect do
   ]
 
   def new(packet) when is_binary(packet) do
-    case packet do
-      <<ver::size(8), cmd::size(8), rsv::size(8), atyp::size(8), dst::binary>> ->
-        case get_dst(atyp, dst) do
-          [addr, port] ->
-            %__MODULE__{ver: ver, cmd: cmd, rsv: rsv, atyp: atyp, addr: addr, port: port}
-
-          _ ->
-            :error
-        end
-
+    with <<@rfc_1928_version, cmd::size(8), rsv::size(8), atyp::size(8), dst::binary>> <- packet,
+         [addr, port] <- get_dst(atyp, dst) do
+      %__MODULE__{ver: @rfc_1928_version, cmd: cmd, rsv: rsv, atyp: atyp, addr: addr, port: port}
+    else
       _ ->
         :error
     end
@@ -49,7 +44,6 @@ defmodule ElixirSocks5.Connect do
   end
 
   defp get_dst(@rfc_1928_atyp_domainname, dst) do
-    / / TODO
   end
 
   defp get_dst(@rfc_1928_atyp_ipv6, dst) do

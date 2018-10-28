@@ -124,6 +124,7 @@ defmodule ElixirSocks5.Server do
   defp socks(:connect, client) do
     {:ok, packet} = :gen_tcp.recv(client, 0, @timeout)
     connect = Connect.new(packet)
+    Logger.debug(inspect(packet))
     Logger.debug(connect)
     socks(:connect, client, connect, packet)
   end
