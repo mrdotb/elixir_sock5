@@ -11,6 +11,10 @@ https://www.ietf.org/rfc/rfc1928.txt - [NO_AUTH SOCKS5](https://raw.githubuserco
 https://www.ietf.org/rfc/rfc1929.txt - [USERNAME/PASSWORD SOCKS5](https://raw.githubusercontent.com/mrdotb/elixir_sock5/master/rfc1929.txt)
 
 ```bash
-curl http://www.google.com --socks5 127.0.0.1:1080
+curl -v https://google.com --socks5 127.0.0.1:1080 --proxy-user username:password
+
+# use socks dns
+curl -v https://google.com --proxy 'socks5h://localhost' --proxy-user username:password
+
 ```
 

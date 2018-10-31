@@ -16,6 +16,13 @@ defmodule ConnectTest do
              Connect.new(packet)
   end
 
+  test "valid connect domainname" do
+    packet = <<5, 1, 0, 3, 10, 103, 111, 111, 103, 108, 101, 46, 99, 111, 109, 1, 187>>
+
+    assert %Connect{ver: 5, cmd: 1, rsv: 0, atyp: 3, addr: 'google.com', port: 443} =
+             Connect.new(packet)
+  end
+
   test "invalid connect 1" do
     packet = <<5, 1, 0, 1, 92, 222, 85, 135, 0, 0, 80>>
     assert :error = Connect.new(packet)

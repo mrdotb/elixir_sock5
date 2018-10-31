@@ -60,7 +60,7 @@ defmodule ElixirSocks5.Server do
   end
 
   defp socks_handshake(client, :error) do
-    end_conn(client, @rfc_1928_replies[:GENERAL_FAILURE])
+    end_conn(client, <<@rfc_1928_replies[:general_failure]>>)
   end
 
   defp socks_handshake(client, _handshake = %Handshake{}) do
@@ -90,7 +90,7 @@ defmodule ElixirSocks5.Server do
   end
 
   defp socks_authentication(client, :error) do
-    end_conn(client, @rfc_1928_replies[:general_failure])
+    end_conn(client, <<@rfc_1928_replies[:general_failure]>>)
   end
 
   defp socks_authentication(client, %Authentication{uname: uname, passwd: passwd}) do
@@ -110,12 +110,13 @@ defmodule ElixirSocks5.Server do
   defp socks_connect(client) do
     {:ok, packet} = :gen_tcp.recv(client, 0, @timeout)
     connect = Connect.new(packet)
+    Logger.debug(inspect(packet))
     Logger.debug(connect)
     socks_connect(client, connect, packet)
   end
 
   defp socks_connect(client, :error, _packet) do
-    end_conn(client, @rfc_1928_replies[:general_failure])
+    end_conn(client, <<@rfc_1928_replies[:general_failure]>>)
   end
 
   defp socks_connect(

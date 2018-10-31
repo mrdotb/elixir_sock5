@@ -44,6 +44,13 @@ defmodule ElixirSocks5.Connect do
   end
 
   defp get_dst(@rfc_1928_atyp_domainname, dst) do
+    case dst do
+      <<address_size::size(8), address::binary-size(address_size), port::size(16)>> ->
+        [to_charlist(address), port]
+
+      _ ->
+        :error
+    end
   end
 
   defp get_dst(@rfc_1928_atyp_ipv6, dst) do
