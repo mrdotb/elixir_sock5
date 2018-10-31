@@ -11,6 +11,7 @@ use Mix.Config
 config :elixir_socks5, authentication: true
 config :elixir_socks5, username: "username"
 config :elixir_socks5, password: "password"
+config :elixir_socks5, port: 1080
 # You can configure your application as:
 #
 #     config :elixir_socks5, key: :value
