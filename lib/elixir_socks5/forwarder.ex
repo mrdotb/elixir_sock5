@@ -26,11 +26,8 @@ defmodule ElixirSocks5.Forwarder do
 
     case :gen_tcp.connect(addr, port, opts, @timeout) do
       {:ok, socket} ->
-        :ok =
-          :gen_tcp.send(
-            client,
-            <<@rfc_1928_version, @rfc_1928_replies[:succeeded]>> <> packet_rest
-          )
+        message = <<@rfc_1928_version, @rfc_1928_replies[:succeeded]>> <> packet_rest
+        :ok = :gen_tcp.send(client, message)
 
         spawn_link(fn ->
           pipe_socket(client, socket, "client -> socket")
@@ -57,6 +54,8 @@ defmodule ElixirSocks5.Forwarder do
     else
       error ->
         Logger.debug("#{string} #{inspect(error)}")
+        :gen_tcp.close(a)
+        :gen_tcp.close(b)
     end
   end
 
