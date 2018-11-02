@@ -21,18 +21,18 @@ curl -v https://google.com --socks5 127.0.0.1:1080 --proxy-user username:passwor
 curl -v https://google.com --proxy 'socks5h://localhost' --proxy-user username:password
 ```
 
-## Authentication
+### Authentication
 - [x] No authentication
 - [ ] GSSAPI
 - [x] Username/password
 - [ ] IANA (wtf is this ?)
 
-## Commands
+### Commands
 - [x] Connect
 - [ ] Bind
 - [ ] UDP associate
 
-## General todo
+### General todo
 - [ ] more tests
 - [ ] use a socket acceptator pool
 - [ ] benchmark
