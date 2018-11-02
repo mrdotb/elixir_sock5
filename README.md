@@ -27,7 +27,12 @@ curl -v https://google.com --proxy 'socks5h://localhost' --proxy-user username:p
 - [x] Username/password
 - [ ] IANA (wtf is this ?)
 
-## TODO
+## Commands
+- [x] Connect
+- [ ] Bind
+- [ ] UDP associate
+
+## General todo
 - [ ] more tests
 - [ ] use a socket acceptator pool
 - [ ] benchmark
