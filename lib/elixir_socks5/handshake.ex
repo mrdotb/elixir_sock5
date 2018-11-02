@@ -18,7 +18,11 @@ defmodule ElixirSocks5.Handshake do
   def new(packet) when is_binary(packet) do
     case packet do
       <<@rfc_1928_version, nmethods::size(8), methods::binary-size(nmethods)>> ->
-        %__MODULE__{ver: @rfc_1928_version, nmethods: nmethods, methods: methods}
+        %__MODULE__{
+          ver: @rfc_1928_version,
+          nmethods: nmethods,
+          methods: :binary.bin_to_list(methods)
+        }
 
       _ ->
         :error
