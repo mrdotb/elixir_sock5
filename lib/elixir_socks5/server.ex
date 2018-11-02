@@ -1,10 +1,6 @@
 defmodule ElixirSocks5.Server do
   require Logger
-  alias ElixirSocks5.Handshake
-  alias ElixirSocks5.Authentication
-  alias ElixirSocks5.Connect
-  alias ElixirSocks5.Forwarder
-
+  alias ElixirSocks5.{Handshake, Authentication, Connect, Forwarder}
   @timeout 1000
 
   @rfc_1928_version 0x05
