@@ -9,7 +9,7 @@ The following RFCs may be useful as background:
 + https://www.ietf.org/rfc/rfc1929.txt
 
 ## How to use ?
-By default the socks5 server use the port 1080 and have basic authentication enabled.
+By default the socks5 server use the port 1080 and have basic authentication enabled. You can tweak it in the config.
 
 ```bash
 # start the server
