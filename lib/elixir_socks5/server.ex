@@ -7,17 +7,16 @@ defmodule ElixirSocks5.Server do
 
   @timeout 1000
 
+  @rfc_1928_version 0x05
   @rfc_1928_commands_connect 0x01
   @rfc_1928_commands_bind 0x02
   @rfc_1928_commands_udp_associate 0x03
-
   @rfc_1928_methods %{
     no_authentication_required: 0x00,
     gssapi: 0x01,
     basic_authentication: 0x02,
     no_acceptable_methods: 0xFF
   }
-
   @rfc_1928_replies %{
     succeeded: 0x00,
     general_failure: 0x01,
@@ -30,7 +29,11 @@ defmodule ElixirSocks5.Server do
     address_type_not_supported: 0x08
   }
 
-  @rfc_1928_version 0x05
+  @rfc_1929_version 0x01
+  @rfc_1929_replies %{
+    succeeded: 0x00,
+    general_failure: 0xFF
+  }
 
   def accept do
     port = Application.get_env(:elixir_socks5, :port)
@@ -63,22 +66,24 @@ defmodule ElixirSocks5.Server do
     end_conn(client, <<@rfc_1928_replies[:general_failure]>>)
   end
 
-  defp socks_handshake(client, _handshake = %Handshake{}) do
-    case Application.get_env(:elixir_socks5, :authentication) do
-      true ->
-        :ok =
-          :gen_tcp.send(client, <<@rfc_1928_version, @rfc_1928_methods[:basic_authentication]>>)
+  defp socks_handshake(client, %Handshake{methods: methods}) do
+    basic_authentication = Application.get_env(:elixir_socks5, :authentication)
 
+    cond do
+      basic_authentication && Enum.member?(methods, @rfc_1928_methods[:basic_authentication]) ->
+        message = <<@rfc_1928_version, @rfc_1928_methods[:basic_authentication]>>
+        :ok = :gen_tcp.send(client, message)
         socks_authentication(client)
 
-      false ->
-        :ok =
-          :gen_tcp.send(
-            client,
-            <<@rfc_1928_version, @rfc_1928_methods[:no_authentication_required]>>
-          )
-
+      !basic_authentication &&
+          Enum.member?(methods, @rfc_1928_methods[:no_authentication_required]) ->
+        message = <<@rfc_1928_version, @rfc_1928_methods[:no_authentication_required]>>
+        :ok = :gen_tcp.send(client, message)
         socks_connect(client)
+
+      true ->
+        message = <<@rfc_1928_version, @rfc_1928_methods[:no_acceptable_methods]>>
+        :ok = :gen_tcp.send(client, message)
     end
   end
 
@@ -90,7 +95,7 @@ defmodule ElixirSocks5.Server do
   end
 
   defp socks_authentication(client, :error) do
-    end_conn(client, <<@rfc_1928_replies[:general_failure]>>)
+    end_conn(client, <<@rfc_1929_replies[:general_failure]>>)
   end
 
   defp socks_authentication(client, %Authentication{uname: uname, passwd: passwd}) do
@@ -99,7 +104,7 @@ defmodule ElixirSocks5.Server do
 
     case username == uname && password == passwd do
       true ->
-        :ok = :gen_tcp.send(client, <<@rfc_1928_version, @rfc_1928_replies[:succeeded]>>)
+        :ok = :gen_tcp.send(client, <<@rfc_1929_version, @rfc_1929_replies[:succeeded]>>)
         socks_connect(client)
 
       false ->
@@ -110,7 +115,6 @@ defmodule ElixirSocks5.Server do
   defp socks_connect(client) do
     {:ok, packet} = :gen_tcp.recv(client, 0, @timeout)
     connect = Connect.new(packet)
-    Logger.debug(inspect(packet))
     Logger.debug(connect)
     socks_connect(client, connect, packet)
   end
