@@ -34,5 +34,5 @@ curl -v https://google.com --proxy 'socks5h://localhost' --proxy-user username:p
 
 ### General todo
 - [ ] more tests
-- [ ] use a socket acceptator pool
+- [x] use a socket acceptator pool
 - [ ] benchmark
